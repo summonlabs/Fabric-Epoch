@@ -1,0 +1,43 @@
+# Build output
+/build/
+/out/
+/install/
+/_deps/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+*.ninja
+.ninja_deps
+.ninja_log
+compile_commands.json
+
+# Compiler and linker artifacts
+*.obj
+*.o
+*.exe
+*.lib
+*.dll
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.res
+
+# Runtime artifacts that must never be committed
+*.log
+*.store
+*.store.watermark
+*.tmp*
+core
+core.*
+*.dmp
+
+# Editor and platform noise
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+desktop.ini

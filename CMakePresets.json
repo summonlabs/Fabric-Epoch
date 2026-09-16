@@ -1,0 +1,59 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "release",
+      "displayName": "Release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "analyze",
+      "displayName": "MSVC static analysis",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/analyze",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FABRIC_EPOCH_ENABLE_ANALYZE": "ON"
+      }
+    },
+    {
+      "name": "asan",
+      "displayName": "AddressSanitizer",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/asan",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS": "/fsanitize=address /Zi",
+        "CMAKE_EXE_LINKER_FLAGS": "/INCREMENTAL:NO"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "release", "configurePreset": "release" },
+    { "name": "debug", "configurePreset": "debug" },
+    { "name": "analyze", "configurePreset": "analyze" },
+    { "name": "asan", "configurePreset": "asan" }
+  ],
+  "testPresets": [
+    { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } },
+    { "name": "debug", "configurePreset": "debug", "output": { "outputOnFailure": true } }
+  ]
+}

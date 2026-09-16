@@ -1,0 +1,65 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+if(NOT WIN32)
+  find_dependency(Threads)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/FabricEpochTargets.cmake")
+
+set(FABRIC_EPOCH_VERSION "@PROJECT_VERSION@")
+
+# ---------------------------------------------------------------------------
+# Fail-fast package self-check. CMake does not export ALIAS targets, so the
+# documented imported target name is verified here rather than assumed, along
+# with the include directory and the umbrella header it must expose.
+# ---------------------------------------------------------------------------
+if(NOT TARGET SummonSoftwareLabs::FabricEpoch)
+  set(FabricEpoch_FOUND FALSE)
+  set(FabricEpoch_NOT_FOUND_MESSAGE
+    "the installed FabricEpoch package does not export SummonSoftwareLabs::FabricEpoch")
+  return()
+endif()
+
+get_target_property(_fabric_epoch_includes SummonSoftwareLabs::FabricEpoch INTERFACE_INCLUDE_DIRECTORIES)
+if(NOT _fabric_epoch_includes)
+  set(FabricEpoch_FOUND FALSE)
+  set(FabricEpoch_NOT_FOUND_MESSAGE
+    "SummonSoftwareLabs::FabricEpoch does not declare INTERFACE_INCLUDE_DIRECTORIES")
+  return()
+endif()
+
+# The generated targets file writes a placeholder token and clears it before
+# this file runs, so the token text is rebuilt here instead of relying on a
+# variable that no longer exists.
+set(_fabric_epoch_token "$")
+string(APPEND _fabric_epoch_token "{_IMPORT_PREFIX}")
+
+set(_fabric_epoch_umbrella_found FALSE)
+foreach(_fabric_epoch_dir IN LISTS _fabric_epoch_includes)
+  if(_fabric_epoch_dir MATCHES "^\\$<")
+    # A generator expression cannot be resolved at package-load time.
+    continue()
+  endif()
+  string(REPLACE "${_fabric_epoch_token}" "${PACKAGE_PREFIX_DIR}"
+                 _fabric_epoch_resolved "${_fabric_epoch_dir}")
+  if(EXISTS "${_fabric_epoch_resolved}/fabric_epoch/fabric_epoch.hpp")
+    set(_fabric_epoch_umbrella_found TRUE)
+  endif()
+endforeach()
+
+if(NOT _fabric_epoch_umbrella_found)
+  set(FabricEpoch_FOUND FALSE)
+  set(FabricEpoch_NOT_FOUND_MESSAGE
+    "the installed FabricEpoch package is missing fabric_epoch/fabric_epoch.hpp")
+  return()
+endif()
+
+unset(_fabric_epoch_includes)
+unset(_fabric_epoch_token)
+unset(_fabric_epoch_dir)
+unset(_fabric_epoch_resolved)
+unset(_fabric_epoch_umbrella_found)
+
+check_required_components(FabricEpoch)
