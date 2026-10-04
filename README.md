@@ -41,7 +41,7 @@ things, and Fabric Epoch refuses to let any one of them stand in for another.
 * versioned, integrity-checked epoch persistence;
 * distributed epoch publication over a framed protocol;
 * real coordinator-restart and real worker-reincarnation semantics;
-* the stale-epoch and stale-boot rejection primitives other Fabric OS runtimes bind to.
+* the stale-epoch and stale-boot rejection primitives other fabric runtimes bind to.
 
 ### Fabric Epoch does not own
 
@@ -80,7 +80,7 @@ PARTICIPANT HAS A CURRENT INCARNATION
 PARTICIPANT HOLDS AUTHORITY IN THE CURRENT EPOCH
 ```
 
-### Relationship to downstream Fabric OS runtimes
+### Relationship to downstream fabric runtimes
 
 A downstream runtime binds to Fabric Epoch by presenting an authority token and asking the cheap
 deterministic validation primitive whether the token is still current **for a specific authority
