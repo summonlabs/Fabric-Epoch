@@ -1,7 +1,6 @@
 # Fabric Epoch
 
-**Fabric Epoch is the authoritative control-plane epoch and stale-authority fencing runtime of the
-Distributed Fabric Infrastructure / Fabric OS stack.** It answers exactly one question:
+**Fabric Epoch is the authoritative control-plane epoch and stale-authority fencing runtime for data-center fabric infrastructure.** It answers exactly one question:
 
 > Which control-plane epoch is authoritative now, which participants and worker incarnations belong
 > to that epoch, which prior generations are permanently stale, and when must traffic, mutations,
