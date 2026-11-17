@@ -307,3 +307,18 @@ FE_TEST(adversarial, path_traversal_in_the_store_path_is_not_interpreted) {
   std::error_code error;
   std::filesystem::remove_all(directory.path().parent_path() / nested.parent_path().filename(), error);
 }
+
+FE_TEST(adversarial, a_second_coordinator_cannot_take_a_listening_port) {
+  RuntimeFixture storage;
+  fe::EpochRuntime runtime(runtime_options(storage));
+  fe::CoordinatorServer first(runtime, fe::CoordinatorServerOptions{});
+  first.start();
+  const std::uint16_t port = first.port();
+  FE_REQUIRE(port != 0);
+  // Two coordinators must never share one listening port: the second start fails.
+  fe::CoordinatorServerOptions options;
+  options.port = port;
+  fe::CoordinatorServer second(runtime, options);
+  FE_REQUIRE_THROWS(second.start());
+  first.stop();
+}

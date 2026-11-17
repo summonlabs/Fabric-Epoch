@@ -40,7 +40,11 @@ FE_TEST(identity, fixed_identifier_hex_round_trip) {
       c = static_cast<char>(c - 'a' + 'A');
     }
   }
-  FE_REQUIRE_EQ(*fe::WorkerBootId::parse(upper), boot);
+  // Kept in a named optional: FE_REQUIRE_EQ binds a reference to its operand,
+  // and a reference into a temporary optional dangles once the binding ends.
+  const auto reparsed = fe::WorkerBootId::parse(upper);
+  FE_REQUIRE(reparsed.has_value());
+  FE_REQUIRE_EQ(*reparsed, boot);
 }
 
 FE_TEST(identity, fixed_identifier_rejects_bad_encoding) {

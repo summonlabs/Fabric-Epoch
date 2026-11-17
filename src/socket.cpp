@@ -213,7 +213,13 @@ void Listener::bind_and_listen(const std::string& address, std::uint16_t port, s
   handle_ = static_cast<std::intptr_t>(handle);
 
   int reuse = 1;
+#if defined(_WIN32)
+  // SO_REUSEADDR on Windows lets a second socket bind a port that is still
+  // listening; exclusive use makes that second bind fail instead.
+  ::setsockopt(handle, SOL_SOCKET, SO_EXCLUSIVEADDRUSE, reinterpret_cast<const char*>(&reuse), sizeof(reuse));
+#else
   ::setsockopt(handle, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&reuse), sizeof(reuse));
+#endif
 
   sockaddr_in endpoint{};
   endpoint.sin_family = AF_INET;

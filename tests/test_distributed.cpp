@@ -363,9 +363,12 @@ FE_TEST(distributed, coordinator_hard_restart_advances_the_epoch_monotonically) 
       publishers.push_back(std::move(publisher));
     }
 
-    // 4. Kill the coordinator with no graceful shutdown at all.
-    const auto exit = coordinator.process->try_wait(kObserveBudgetMilliseconds);
-    FE_REQUIRE_MSG(!exit.has_value(), "the coordinator exited before it was killed");
+    // 4. Kill the coordinator with no graceful shutdown at all. It answers a
+    //    request and is still running right before the kill, so the loss is the
+    //    kill and not an exit of its own (waiting out the observation budget for
+    //    it not to exit cost the whole budget on every generation).
+    FE_REQUIRE_EQ(publishers.front().client->epoch_state().epoch, coordinator.epoch);
+    FE_REQUIRE_MSG(coordinator.process->running(), "the coordinator exited before it was killed");
     coordinator.process->terminate();
     FE_REQUIRE(!coordinator.process->running());
     observed.push_back(coordinator.epoch.value());
